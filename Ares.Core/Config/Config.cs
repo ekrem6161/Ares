@@ -5,13 +5,13 @@ namespace Ares.Core;
 
 public static partial class Config
 {
-    public static string OpenAIKey { get; internal set; } = "";
-    public static string OpenAIURL { get; internal set; } = "";
-    public static string OpenAIModel { get; internal set; } = "";
-    public static string AnthropicKey { get; internal set; } = "";
-    public static string AnthropicURL { get; internal set; } = "";
-    public static string AnthropicModel { get; internal set; } = "";
-    public static string DefaultProvider { get; internal set; } = "OpenAI";
+    public static string OpenAIKey { get; set; } = "";
+    public static string OpenAIURL { get; set; } = "";
+    public static string OpenAIModel { get; set; } = "";
+    public static string AnthropicKey { get; set; } = "";
+    public static string AnthropicURL { get; set; } = "";
+    public static string AnthropicModel { get; set; } = "";
+    public static string DefaultProvider { get; set; } = "OpenAI";
 
     private static readonly object _kilit = new();
     private static readonly string _yol = Path.Combine(
