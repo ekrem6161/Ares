@@ -11,6 +11,7 @@ public static partial class Config
     public static string AnthropicKey { get; internal set; } = "";
     public static string AnthropicURL { get; internal set; } = "";
     public static string AnthropicModel { get; internal set; } = "";
+    public static string DefaultProvider { get; internal set; } = "OpenAI";
 
     private static readonly object _kilit = new();
     private static readonly string _yol = Path.Combine(

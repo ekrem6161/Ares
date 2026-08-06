@@ -19,6 +19,7 @@ public static partial class Config
                     ["AnthropicKey"] = string.IsNullOrWhiteSpace(AnthropicKey) ? "" : Crypto.Encrypt(AnthropicKey),
                     ["AnthropicURL"] = AnthropicURL,
                     ["AnthropicModel"] = AnthropicModel,
+                    ["DefaultProvider"] = DefaultProvider,
                 };
                 var gecici = _yol + ".tmp";
                 File.WriteAllText(gecici, JsonSerializer.Serialize(sozluk, _jsonOps));

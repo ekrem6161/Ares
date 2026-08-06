@@ -47,5 +47,6 @@ public class ConfigTestBase : IDisposable
         Config.AnthropicKey = "";
         Config.AnthropicURL = "";
         Config.AnthropicModel = "";
+        Config.DefaultProvider = "OpenAI";
     }
 }

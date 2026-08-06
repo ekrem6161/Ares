@@ -39,6 +39,9 @@ public static partial class Config
                 AnthropicKey = Oku(sozluk, "AnthropicKey", true);
                 AnthropicURL = Oku(sozluk, "AnthropicURL", false);
                 AnthropicModel = Oku(sozluk, "AnthropicModel", false);
+                DefaultProvider = Oku(sozluk, "DefaultProvider", false);
+                if (DefaultProvider != "Anthropic")
+                    DefaultProvider = "OpenAI";
                 return true;
             }
             catch (Exception e)
