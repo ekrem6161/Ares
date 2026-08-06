@@ -44,4 +44,20 @@ public class AnthropicConnectionTests
         Assert.StartsWith("[HATA]", sonuc);
         Assert.Contains("İçerik", sonuc);
     }
+
+    [Fact]
+    public void CevapMetni_ThinkingBloguVarsaTextiBulur()
+    {
+        var json = "{\"content\":[" +
+            "{\"type\":\"thinking\",\"thinking\":\"dusunuyorum...\"}," +
+            "{\"type\":\"text\",\"text\":\"Merhaba!\"}]}";
+        Assert.Equal("Merhaba!", CevapParser.MetniCikar(json));
+    }
+
+    [Fact]
+    public void CevapMetni_TextBloguYoksaHataDoner()
+    {
+        var json = "{\"content\":[{\"type\":\"thinking\",\"thinking\":\"dusunuyorum...\"}]}";
+        Assert.StartsWith("[HATA]", CevapParser.MetniCikar(json));
+    }
 }

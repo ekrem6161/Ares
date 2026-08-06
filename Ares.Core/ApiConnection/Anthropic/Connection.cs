@@ -46,8 +46,7 @@ public static class Connection
                 Console.Error.WriteLine($"[Anthropic.Connection] HTTP {(int)yanit.StatusCode}: {metin}");
                 return $"[HATA] Anthropic HTTP {(int)yanit.StatusCode}";
             }
-            using var belge = JsonDocument.Parse(metin);
-            return belge.RootElement.GetProperty("content")[0].GetProperty("text").GetString() ?? "";
+            return CevapParser.MetniCikar(metin);
         }
         catch (Exception e)
         {

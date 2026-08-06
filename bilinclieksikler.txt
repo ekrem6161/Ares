@@ -1,0 +1,85 @@
+======================================================
+  ARES PROJESI — BILINCLI EKSIKLER (ERELENEN ISLER)
+======================================================
+Bu dosya, bilinçli olarak ertelenen/not alınan işleri listeler.
+Bunlar "hata" değildir; kapsam disiplini gereği kayıt altına
+alınmıştır. Yeni görev planlanırken buraya bakılır.
+
+------------------------------------------------------
+1. STREAMING (akan cevap)
+------------------------------------------------------
+- Durum: Cevap tek parça (Task<string>) alınıyor.
+- Neden ertelendi: TUI'de parça parça render karmaşıktır,
+  önce sabit tek parça akışı oturtuldu.
+- Eklenecek: OpenAI "stream: true" + Anthropic "stream: true"
+  SSE parse; TUI'ye parça parça teslim.
+
+------------------------------------------------------
+2. TIMEOUT
+------------------------------------------------------
+- Durum: HttpClient varsayılan 100 sn timeout ile çalışıyor.
+- Neden ertelendi: Local (LM Studio) için sorun değil.
+- Eklenecek: Config'e ayarlanabilir timeout saniyesi.
+
+------------------------------------------------------
+3. ISTEK IPTALI (CancellationToken)
+------------------------------------------------------
+- Durum: İstek başladıysa iptal edilemiyor.
+- Neden ertelendi: TUI'de "durdur" düğmesi henüz yok.
+- Eklenecek: Router/Connection'lara CancellationToken
+  parametresi; TUI'de iptal tetikleyicisi.
+
+------------------------------------------------------
+4. PROMPT CACHING
+------------------------------------------------------
+- Durum: Yok. Kullanıcı onayıyla ertelendi.
+- Neden: Henüz cache'lenecek büyük içerik yok (sistem promptu
+  ve uzun session geçmişi gelmedi; 1024 token eşiği aşılmaz).
+- Eklenecek: Session + sistem promptu özelliğiyle birlikte;
+  Anthropic'te system alanına cache_control eklenir.
+- Not: OpenAI zaten otomatik cache yapar, LM Studio'ya gerek yok.
+
+------------------------------------------------------
+5. HATA MODELI (Result<T>)
+------------------------------------------------------
+- Durum: Hatalar "[HATA] ..." string önekiyle dönülüyor.
+- Neden ertelendi: V1 için basit ve UI'da görünebilir.
+- Eklenecek: Hata kodları/retry gerekirse Result<T> desenine
+  geçilir.
+
+------------------------------------------------------
+6. SESSION (oturum geçmişi)
+------------------------------------------------------
+- Durum: Yok; her istek tek atımlık, geçmiş taşınmıyor.
+- Eklenecek: Mesaj geçmişi listesi, kayıt/yükleme,
+  TUI'de oturum görünümü. (Prompt caching ile birlikte.)
+
+------------------------------------------------------
+7. TUI KATMANI (Ares.UI)
+------------------------------------------------------
+- Durum: Ares.UI projesi boş; Terminal.Gui 1.17.1 hazır.
+- Eklenecek: Karşılama ekranı, prompt kutusu, sohbet görünümü,
+  config ekranı. Router.IstekGonder bağlanacak.
+- Bilinen API notu (1.17.1): TextField.Placeholder ve
+  StatusItem.Alignment YOKTUR; placeholder overlay Label ile,
+  sağ/sol çubuklar özel Redraw ile yapılır.
+
+------------------------------------------------------
+8. CONFIG: /provider KOMUTU
+------------------------------------------------------
+- Durum: Sağlayıcı seçimi DefaultProvider config alanıyla yapılıyor.
+- Eklenecek: Sohbet içi "/provider openai|anthropic" komutu
+  (config değerini değiştirir).
+
+------------------------------------------------------
+9. MAX_TOKENS (Anthropic)
+------------------------------------------------------
+- Durum: Sabit 2048 (Anthropic/Connection.cs icinde).
+- Eklenecek: Config'e ayarlanabilir max_tokens alanı.
+
+------------------------------------------------------
+10. ANTHROPIC CANLI TEST GECMISI NOTU
+------------------------------------------------------
+- claude-sonnet-4-20250514 model adi gecersizdi (404);
+  guncel model listesi API'den alinip claude-sonnet-5 kullanildi.
+  Model adi degisince: once /v1/models ile dogrula.
