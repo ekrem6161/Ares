@@ -11,11 +11,11 @@ public static class Connection
     public static async Task<string> IstekGonder(string anahtar, string url, string model, List<Mesaj> mesajlar)
     {
         if (string.IsNullOrWhiteSpace(anahtar))
-            return BosHata("Anahtar boş");
+            return Hata.Doner("OpenAI", "Anahtar boş");
         if (string.IsNullOrWhiteSpace(url) || string.IsNullOrWhiteSpace(model))
-            return BosHata("URL veya model boş");
+            return Hata.Doner("OpenAI", "URL veya model boş");
         if (mesajlar is null || mesajlar.Count == 0)
-            return BosHata("Mesaj listesi boş");
+            return Hata.Doner("OpenAI", "Mesaj listesi boş");
 
         var govde = new
         {
@@ -45,11 +45,5 @@ public static class Connection
             Console.Error.WriteLine($"[OpenAI.Connection] {e.Message}");
             return "[HATA] OpenAI isteği başarısız: " + e.Message;
         }
-    }
-
-    private static string BosHata(string sebep)
-    {
-        Console.Error.WriteLine($"[OpenAI.Connection] {sebep}");
-        return $"[HATA] OpenAI {sebep}.";
     }
 }

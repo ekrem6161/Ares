@@ -22,7 +22,7 @@ public static class Router
         return provider switch
         {
             ProviderTipi.OpenAI => Connection.IstekGonder(Config.OpenAIKey, Config.OpenAIURL, Config.OpenAIModel, mesajlar),
-            ProviderTipi.Anthropic => Task.FromResult("[HATA] Anthropic henüz eklenmedi."),
+            ProviderTipi.Anthropic => Anthropic.Connection.IstekGonder(Config.AnthropicKey, Config.AnthropicURL, Config.AnthropicModel, mesajlar),
             _ => Task.FromResult("[HATA] Bilinmeyen sağlayıcı: " + provider),
         };
     }

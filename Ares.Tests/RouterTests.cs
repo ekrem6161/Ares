@@ -33,7 +33,8 @@ public class RouterTests : ConfigTestBase
     {
         Config.DefaultProvider = "Anthropic";
         var sonuc = await Router.IstekGonder("selam");
-        Assert.StartsWith("[HATA] Anthropic henüz eklenmedi", sonuc);
+        Assert.StartsWith("[HATA] Anthropic", sonuc);
+        Assert.Contains("Anahtar", sonuc);
     }
 
     private static List<Mesaj> TekMesaj() => new() { new(RolTipi.User, "selam") };
