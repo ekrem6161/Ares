@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Threading.Tasks;
 using Ares.Core;
 
@@ -8,9 +9,11 @@ internal static class Program
 {
     private static async Task Main()
     {
-        Config.OpenAIKey = "lm-studio";
-        Config.OpenAIURL = "http://192.168.1.105:1234/v1/chat/completions";
-        Config.OpenAIModel = "ornith";
+        var satirlar = File.ReadAllLines(@"C:\Users\Ekrem\Desktop\dih.txt");
+        Config.AnthropicKey = satirlar[0].Trim();
+        Config.AnthropicURL = "https://api.anthropic.com/v1/messages";
+        Config.AnthropicModel = "claude-sonnet-5";
+        Config.DefaultProvider = "Anthropic";
         Config.Kaydet();
         Config.Yukle();
         var cevap = await Router.IstekGonder("Merhaba, tek cümleyle kendini tanit.");
