@@ -8,7 +8,7 @@ namespace Ares.UI;
 /// </summary>
 public static class Arayuz
 {
-    public static Task Calistir()
+    public static void Calistir()
     {
         Application.Init();
         try
@@ -27,6 +27,5 @@ public static class Arayuz
         {
             Application.Shutdown();
         }
-        return Task.CompletedTask;
     }
 }

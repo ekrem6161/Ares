@@ -21,14 +21,4 @@ public static partial class Config
         PropertyNameCaseInsensitive = true,
         WriteIndented = true,
     };
-
-    public static void EkranaYaz()
-    {
-        Console.WriteLine($"OpenAIKey: {OpenAIKey}");
-        Console.WriteLine($"OpenAIURL: {OpenAIURL}");
-        Console.WriteLine($"OpenAIModel: {OpenAIModel}");
-        Console.WriteLine($"AnthropicKey: {AnthropicKey}");
-        Console.WriteLine($"AnthropicURL: {AnthropicURL}");
-        Console.WriteLine($"AnthropicModel: {AnthropicModel}");
-    }
 }

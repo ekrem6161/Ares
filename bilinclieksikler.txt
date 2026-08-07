@@ -60,9 +60,15 @@ alınmıştır. Yeni görev planlanırken buraya bakılır.
 ------------------------------------------------------
 7. TUI KATMANI (Ares.UI)
 ------------------------------------------------------
-- Durum: Ares.UI projesi boş; Terminal.Gui 1.17.1 hazır.
-- Eklenecek: Karşılama ekranı, prompt kutusu, sohbet görünümü,
-  config ekranı. Router.IstekGonder bağlanacak.
+- Durum: Karşılama ekranı var (logo, ayraç, kısayollar).
+  AkisTuketicisi eklendi: stream arka planda okunur, her parça
+  MainLoop.Invoke ile UI iş parçacığına taşınır (docs/mainloop.md:
+  TG thread-safe değildir, UI'a yalnızca ana döngüden dokunulur).
+- YASAK: UI thread'inde stream'i senkron bekletmek (.Result /
+  GetAwaiter().GetResult()) — ana döngü donar, tüm yazı birden
+  basılır, streaming anlamsızlaşır.
+- Kalan: Sohbet ekranı AkisTuketicisi'ni kullanacak; prompt kutusu,
+  sohbet görünümü, config ekranı. Router.IstekGonder bağlanacak.
 - Bilinen API notu (1.17.1): TextField.Placeholder ve
   StatusItem.Alignment YOKTUR; placeholder overlay Label ile,
   sağ/sol çubuklar özel Redraw ile yapılır.
