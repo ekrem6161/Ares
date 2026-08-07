@@ -8,11 +8,13 @@ alınmıştır. Yeni görev planlanırken buraya bakılır.
 ------------------------------------------------------
 1. STREAMING (akan cevap)
 ------------------------------------------------------
-- Durum: Cevap tek parça (Task<string>) alınıyor.
-- Neden ertelendi: TUI'de parça parça render karmaşıktır,
-  önce sabit tek parça akışı oturtuldu.
-- Eklenecek: OpenAI "stream: true" + Anthropic "stream: true"
-  SSE parse; TUI'ye parça parça teslim.
+- Durum: TAMAMLANDI (core/streaming branch'i). Cevap artık
+  parça parça (IAsyncEnumerable<string>) aliniyor.
+- Yapilan: OpenAI + Anthropic "stream: true" SSE parse
+  (SseOkuyucu + her saglayicinin CevapParser'i), hatalar
+  "[HATA] ..." tek parcasi olarak akar. Canli dogrulandi.
+- Kalan: TUI'de parca parca render — sohbet ekrani
+  adiminda (MesajBaslat/EkleVeyaAc hazir).
 
 ------------------------------------------------------
 2. TIMEOUT
@@ -24,10 +26,11 @@ alınmıştır. Yeni görev planlanırken buraya bakılır.
 ------------------------------------------------------
 3. ISTEK IPTALI (CancellationToken)
 ------------------------------------------------------
-- Durum: İstek başladıysa iptal edilemiyor.
-- Neden ertelendi: TUI'de "durdur" düğmesi henüz yok.
+- Durum: Istek basladiysa iptal edilemiyor.
+- Not: Streaming adiminda kasitli olarak EKLENMEDI (Ekrem
+  karari: UI isi, ayri branch'te yapilacak).
 - Eklenecek: Router/Connection'lara CancellationToken
-  parametresi; TUI'de iptal tetikleyicisi.
+  parametresi; TUI'de iptal tetikleyicisi (Esc).
 
 ------------------------------------------------------
 4. PROMPT CACHING
