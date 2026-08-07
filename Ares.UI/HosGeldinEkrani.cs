@@ -34,11 +34,6 @@ public sealed class HosGeldinEkrani : View
             X = 14, Y = 0, Height = 1,
             ColorScheme = Tema.MetinSemasi(Color.BrightCyan),
         };
-        var tanim = new Label("terminal AI assistant")
-        {
-            X = 14, Y = 1, Height = 1,
-            ColorScheme = Tema.MetinSemasi(Color.Gray),
-        };
 
         var baslik = new Label("Welcome to Ares")
         {
@@ -68,7 +63,7 @@ public sealed class HosGeldinEkrani : View
         };
         altBilgi.Ayarla("Ctrl+Q quit", "", Color.BrightGreen);
 
-        Add(logo, ayrac, surum, tanim, baslik, aciklama, kisaYol, altBilgi);
+        Add(logo, ayrac, surum, baslik, aciklama, kisaYol, altBilgi);
     }
 
     private void TusBasildi(View.KeyEventEventArgs e)
