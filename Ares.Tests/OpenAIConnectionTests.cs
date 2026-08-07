@@ -13,7 +13,8 @@ public class OpenAIConnectionTests
     [Fact]
     public async Task IstekGonder_BosAnahtar_AglIsistemiYapilmaz()
     {
-        var sonuc = await Connection.IstekGonder("", "https://example.com/v1/chat/completions", "gpt-4o", Mesajlar);
+        var sonuc = await TestYardimcilari.AkisiTopla(
+            Connection.IstekGonder("", "https://example.com/v1/chat/completions", "gpt-4o", Mesajlar));
         Assert.StartsWith("[HATA]", sonuc);
         Assert.Contains("Anahtar", sonuc);
     }
@@ -21,7 +22,8 @@ public class OpenAIConnectionTests
     [Fact]
     public async Task IstekGonder_BosURL_HataDoner()
     {
-        var sonuc = await Connection.IstekGonder("sk-test", "", "gpt-4o", Mesajlar);
+        var sonuc = await TestYardimcilari.AkisiTopla(
+            Connection.IstekGonder("sk-test", "", "gpt-4o", Mesajlar));
         Assert.StartsWith("[HATA]", sonuc);
         Assert.Contains("URL", sonuc);
     }
@@ -29,7 +31,8 @@ public class OpenAIConnectionTests
     [Fact]
     public async Task IstekGonder_BosModel_HataDoner()
     {
-        var sonuc = await Connection.IstekGonder("sk-test", "https://example.com/v1/chat/completions", "", Mesajlar);
+        var sonuc = await TestYardimcilari.AkisiTopla(
+            Connection.IstekGonder("sk-test", "https://example.com/v1/chat/completions", "", Mesajlar));
         Assert.StartsWith("[HATA]", sonuc);
         Assert.Contains("model", sonuc, System.StringComparison.OrdinalIgnoreCase);
     }

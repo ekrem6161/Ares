@@ -8,24 +8,37 @@ public static class Connection
     private static readonly HttpClient _http = new();
     private const int MaksToken = 2048;
 
-    public static async Task<string> IstekGonder(string anahtar, string url, string model, List<Mesaj> mesajlar)
+    /// <summary>
+    /// Anthropic API'ye streaming isteği gönderir (stream: true).
+    /// Metin parçalarını akış olarak döner; hata durumlarında "[HATA] ..."
+    /// tek parça olarak akar.
+    /// </summary>
+    public static IAsyncEnumerable<string> IstekGonder(string anahtar, string url, string model, List<Mesaj> mesajlar)
     {
         if (string.IsNullOrWhiteSpace(anahtar))
-            return Hata.Doner("Anthropic", "Anahtar boş");
+            return AkisUretici.TekParca(Hata.Doner("Anthropic", "Anahtar boş"));
         if (string.IsNullOrWhiteSpace(url) || string.IsNullOrWhiteSpace(model))
-            return Hata.Doner("Anthropic", "URL veya model boş");
+            return AkisUretici.TekParca(Hata.Doner("Anthropic", "URL veya model boş"));
         if (mesajlar is null || mesajlar.Count == 0)
-            return Hata.Doner("Anthropic", "Mesaj listesi boş");
+            return AkisUretici.TekParca(Hata.Doner("Anthropic", "Mesaj listesi boş"));
+        return AkisUretici.Guvenli(AkisiUret(anahtar, url, model, mesajlar), "Anthropic");
+    }
 
+    private static async IAsyncEnumerable<string> AkisiUret(string anahtar, string url, string model, List<Mesaj> mesajlar)
+    {
         var icerikMesajlari = mesajlar.Where(m => m.Rol != RolTipi.System).ToList();
         if (icerikMesajlari.Count == 0)
-            return Hata.Doner("Anthropic", "İçerik mesajı yok");
+        {
+            yield return Hata.Doner("Anthropic", "İçerik mesajı yok");
+            yield break;
+        }
 
         var sistem = string.Join("\n", mesajlar.Where(m => m.Rol == RolTipi.System).Select(m => m.Icerik));
         var govde = new Dictionary<string, object?>
         {
             ["model"] = model,
             ["max_tokens"] = MaksToken,
+            ["stream"] = true,
             ["messages"] = icerikMesajlari.Select(m => new { role = m.Rol.ToString().ToLowerInvariant(), content = m.Icerik }),
         };
         if (!string.IsNullOrWhiteSpace(sistem))
@@ -37,21 +50,23 @@ public static class Connection
         };
         istek.Headers.Add("x-api-key", anahtar);
         istek.Headers.Add("anthropic-version", "2023-06-01");
-        try
+
+        using var yanit = await _http.SendAsync(istek, HttpCompletionOption.ResponseHeadersRead);
+        if (!yanit.IsSuccessStatusCode)
         {
-            using var yanit = await _http.SendAsync(istek);
-            var metin = await yanit.Content.ReadAsStringAsync();
-            if (!yanit.IsSuccessStatusCode)
-            {
-                Console.Error.WriteLine($"[Anthropic.Connection] HTTP {(int)yanit.StatusCode}: {metin}");
-                return $"[HATA] Anthropic HTTP {(int)yanit.StatusCode}";
-            }
-            return CevapParser.MetniCikar(metin);
+            var hataMetni = await yanit.Content.ReadAsStringAsync();
+            Console.Error.WriteLine($"[Anthropic.Connection] HTTP {(int)yanit.StatusCode}: {hataMetni}");
+            yield return $"[HATA] Anthropic HTTP {(int)yanit.StatusCode}";
+            yield break;
         }
-        catch (Exception e)
+
+        using var akim = await yanit.Content.ReadAsStreamAsync();
+        using var okuyucu = new StreamReader(akim, Encoding.UTF8);
+        await foreach (var parca in SseOkuyucu.DataParcalari(okuyucu))
         {
-            Console.Error.WriteLine($"[Anthropic.Connection] {e.Message}");
-            return "[HATA] Anthropic isteği başarısız: " + e.Message;
+            var metin = CevapParser.AkisParcasiCikar(parca);
+            if (metin.Length > 0)
+                yield return metin;
         }
     }
 }

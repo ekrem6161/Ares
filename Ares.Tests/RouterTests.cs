@@ -10,21 +10,21 @@ public class RouterTests : ConfigTestBase
     [Fact]
     public async Task IstekGonder_BosMesajListesi_HataDoner()
     {
-        var sonuc = await Router.IstekGonder(ProviderTipi.OpenAI, new List<Mesaj>());
+        var sonuc = await TestYardimcilari.AkisiTopla(Router.IstekGonder(ProviderTipi.OpenAI, new List<Mesaj>()));
         Assert.StartsWith("[HATA]", sonuc);
     }
 
     [Fact]
     public async Task IstekGonder_NullMesajListesi_CrashEtmez()
     {
-        var sonuc = await Router.IstekGonder(ProviderTipi.OpenAI, null!);
+        var sonuc = await TestYardimcilari.AkisiTopla(Router.IstekGonder(ProviderTipi.OpenAI, null!));
         Assert.StartsWith("[HATA]", sonuc);
     }
 
     [Fact]
     public async Task IstekGonder_BilinmeyenProvider_HataDoner()
     {
-        var sonuc = await Router.IstekGonder((ProviderTipi)999, TekMesaj());
+        var sonuc = await TestYardimcilari.AkisiTopla(Router.IstekGonder((ProviderTipi)999, TekMesaj()));
         Assert.StartsWith("[HATA] Bilinmeyen sağlayıcı", sonuc);
     }
 
@@ -32,7 +32,7 @@ public class RouterTests : ConfigTestBase
     public async Task IstekGonder_VarsayilanAnthropic_AnthropicKoluDoner()
     {
         Config.DefaultProvider = "Anthropic";
-        var sonuc = await Router.IstekGonder("selam");
+        var sonuc = await TestYardimcilari.AkisiTopla(Router.IstekGonder("selam"));
         Assert.StartsWith("[HATA] Anthropic", sonuc);
         Assert.Contains("Anahtar", sonuc);
     }

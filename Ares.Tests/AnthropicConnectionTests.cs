@@ -15,7 +15,7 @@ public class AnthropicConnectionTests
     [Fact]
     public async Task IstekGonder_BosAnahtar_AglIsistemiYapilmaz()
     {
-        var sonuc = await Connection.IstekGonder("", TestURL, TestModel, Mesajlar);
+        var sonuc = await TestYardimcilari.AkisiTopla(Connection.IstekGonder("", TestURL, TestModel, Mesajlar));
         Assert.StartsWith("[HATA]", sonuc);
         Assert.Contains("Anahtar", sonuc);
     }
@@ -23,7 +23,7 @@ public class AnthropicConnectionTests
     [Fact]
     public async Task IstekGonder_BosURL_HataDoner()
     {
-        var sonuc = await Connection.IstekGonder("sk-ant-test", "", TestModel, Mesajlar);
+        var sonuc = await TestYardimcilari.AkisiTopla(Connection.IstekGonder("sk-ant-test", "", TestModel, Mesajlar));
         Assert.StartsWith("[HATA]", sonuc);
         Assert.Contains("URL", sonuc);
     }
@@ -31,7 +31,7 @@ public class AnthropicConnectionTests
     [Fact]
     public async Task IstekGonder_BosModel_HataDoner()
     {
-        var sonuc = await Connection.IstekGonder("sk-ant-test", TestURL, "", Mesajlar);
+        var sonuc = await TestYardimcilari.AkisiTopla(Connection.IstekGonder("sk-ant-test", TestURL, "", Mesajlar));
         Assert.StartsWith("[HATA]", sonuc);
         Assert.Contains("model", sonuc, System.StringComparison.OrdinalIgnoreCase);
     }
@@ -39,8 +39,8 @@ public class AnthropicConnectionTests
     [Fact]
     public async Task IstekGonder_SadeceSystem_Reddedilir()
     {
-        var sonuc = await Connection.IstekGonder("sk-ant-test", TestURL, TestModel,
-            new List<Mesaj> { new(RolTipi.System, "Sen Ares'sin") });
+        var sonuc = await TestYardimcilari.AkisiTopla(Connection.IstekGonder("sk-ant-test", TestURL, TestModel,
+            new List<Mesaj> { new(RolTipi.System, "Sen Ares'sin") }));
         Assert.StartsWith("[HATA]", sonuc);
         Assert.Contains("İçerik", sonuc);
     }

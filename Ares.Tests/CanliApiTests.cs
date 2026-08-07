@@ -15,10 +15,10 @@ public class CanliApiTests
     private static async Task<string> Iste(ProviderTipi provider)
     {
         Assert.True(Config.Yukle(), "Config yuklenemedi (ARES_CANLI=1 ile calistirildi mi?)");
-        return await Router.IstekGonder(provider, new List<Mesaj>
+        return await TestYardimcilari.AkisiTopla(Router.IstekGonder(provider, new List<Mesaj>
         {
             new(RolTipi.User, "Hangi model oldugunu tek kelimeyle soyle."),
-        });
+        }));
     }
 
     [Fact]
