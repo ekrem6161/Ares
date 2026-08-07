@@ -1,11 +1,6 @@
-using Ares.Core;
+using System.Threading.Tasks;
+using Ares.UI;
 
-namespace Ares;
+// ares.exe — TUI giriş noktası: hoş geldin ekranından başlar.
 
-internal static class Program
-{
-    private static void Main()
-    {
-        Config.EkranaYaz();
-    }
-}
+await Arayuz.Calistir();
