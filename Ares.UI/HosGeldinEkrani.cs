@@ -60,7 +60,7 @@ public sealed class HosGeldinEkrani : View
         {
             X = 0, Y = Pos.AnchorEnd(2), Width = Dim.Fill(), Height = 2,
         };
-        altBilgi.Ayarla("Ctrl+Q quit", "ready", Color.BrightGreen);
+        altBilgi.Ayarla("Ctrl+Q quit", "", Color.BrightGreen);
 
         Add(logo, surum, tanim, baslik, aciklama, kisaYol, altBilgi);
     }
