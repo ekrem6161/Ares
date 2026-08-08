@@ -5,19 +5,21 @@ namespace Ares.UI.Bilesenler;
 
 /// <summary>
 /// opencode'un Knight Rider tarayıcı animasyonu (blocks stili, birebir
-/// parametreler: genişlik 8, holdStart 30, holdEnd 9, 40ms): çift yönlü
-/// tarama, uçlarda bekleme, arkada gradyan kuyruk. Aktif kare ■ parlak,
-/// kuyruk soluklaşır, pasif · koyu. Glifler cmd uyumlu (braille cmd'de
-/// render edilmez). Her Baslat çerçeveyi baştan alır.
+/// parametreler: genişlik 8 hücre, holdStart 30, holdEnd 9, 40ms): çift
+/// yönlü tarama, uçlarda bekleme, arkada gradyan kuyruk. Her hücre 2
+/// kolon çizilir: aktif ■■ parlak, kuyruk soluklaşır, pasif ·· koyu.
+/// Glifler cmd uyumlu (braille cmd'de render edilmez). Her Baslat
+/// çerçeveyi baştan alır.
 /// </summary>
 public sealed class SpinnerGorunumu : View
 {
-    private const int Genislik = 8;
-    private const int Ileri = Genislik;
-    private const int Geri = Genislik - 1;
+    private const int Hucresayisi = 8;
+    private const int Ileri = Hucresayisi;
+    private const int Geri = Hucresayisi - 1;
     private const int BekleBas = 30;
     private const int BekleSon = 9;
     private const int Toplam = Ileri + BekleSon + Geri + BekleBas;
+    private const int HucreGenisligi = 2;
 
     private int _cerceve;
     private object? _zamanlayici;
@@ -27,7 +29,7 @@ public sealed class SpinnerGorunumu : View
     public SpinnerGorunumu()
     {
         CanFocus = false;
-        Width = Genislik;
+        Width = Hucresayisi * HucreGenisligi;
         Height = 1;
     }
 
@@ -55,7 +57,7 @@ public sealed class SpinnerGorunumu : View
     public override void Redraw(Rect bounds)
     {
         var surucu = Application.Driver;
-        if (!Aktif || Bounds.Width < Genislik)
+        if (!Aktif || Bounds.Width < Hucresayisi * HucreGenisligi)
         {
             surucu.SetAttribute(surucu.MakeAttribute(Color.Black, Color.Black));
             Move(0, 0);
@@ -63,10 +65,10 @@ public sealed class SpinnerGorunumu : View
             return;
         }
 
-        for (int i = 0; i < Genislik; i++)
+        for (int i = 0; i < Hucresayisi; i++)
         {
             int indeks = RenkIndeksi(i);
-            string glif = indeks < 0 ? "·" : "■";
+            string glif = indeks < 0 ? "··" : "■■";
             var renk = indeks switch
             {
                 0 => Color.BrightGreen,
@@ -75,7 +77,7 @@ public sealed class SpinnerGorunumu : View
                 _ => Color.DarkGray,
             };
             surucu.SetAttribute(surucu.MakeAttribute(renk, Color.Black));
-            Move(i, 0);
+            Move(i * HucreGenisligi, 0);
             surucu.AddStr(glif);
         }
     }
@@ -94,11 +96,11 @@ public sealed class SpinnerGorunumu : View
         }
         else if (f < Ileri + BekleSon)
         {
-            hareket = false; ileri = true; konum = Genislik - 1; fade = f - Ileri;
+            hareket = false; ileri = true; konum = Hucresayisi - 1; fade = f - Ileri;
         }
         else if (f < Ileri + BekleSon + Geri)
         {
-            hareket = true; ileri = false; konum = Genislik - 2 - (f - Ileri - BekleSon); fade = 0;
+            hareket = true; ileri = false; konum = Hucresayisi - 2 - (f - Ileri - BekleSon); fade = 0;
         }
         else
         {

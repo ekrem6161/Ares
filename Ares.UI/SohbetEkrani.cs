@@ -46,7 +46,7 @@ public sealed class SohbetEkrani : View
 
         _kutu = new IstemKutusu
         {
-            X = 0, Y = Pos.AnchorEnd(5), Width = Dim.Fill(),
+            X = 1, Y = Pos.AnchorEnd(5), Width = Dim.Fill(1),
             Placeholder = "Type a message and press Enter to chat",
         };
 
@@ -58,7 +58,7 @@ public sealed class SohbetEkrani : View
 
         _spinner = new SpinnerGorunumu
         {
-            X = 0, Y = Pos.AnchorEnd(1),
+            X = 1, Y = Pos.AnchorEnd(1),
         };
 
         _kutu.MesajGonderildi += MesajGeldi;
