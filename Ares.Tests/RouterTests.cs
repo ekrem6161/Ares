@@ -37,5 +37,17 @@ public class RouterTests : ConfigTestBase
         Assert.Contains("Anahtar", sonuc);
     }
 
+    [Fact]
+    public async Task IstekGonder_Liste_VarsayilanProviderKullanir()
+    {
+        Config.DefaultProvider = "OpenAI";
+        var sonuc = await TestYardimcilari.AkisiTopla(Router.IstekGonder(new List<Mesaj>
+        {
+            new(RolTipi.User, "selam"),
+        }));
+        Assert.StartsWith("[HATA] OpenAI", sonuc);
+        Assert.Contains("Anahtar", sonuc);
+    }
+
     private static List<Mesaj> TekMesaj() => new() { new(RolTipi.User, "selam") };
 }

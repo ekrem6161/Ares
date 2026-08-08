@@ -13,6 +13,13 @@ public static class Router
         return IstekGonder(provider, new List<Mesaj> { new(RolTipi.User, mesaj) });
     }
 
+    /// <summary>Varsayılan sağlayıcıya mesaj geçmişiyle streaming istek gönderir.</summary>
+    public static IAsyncEnumerable<string> IstekGonder(List<Mesaj> mesajlar)
+    {
+        var provider = Config.DefaultProvider == "Anthropic" ? ProviderTipi.Anthropic : ProviderTipi.OpenAI;
+        return IstekGonder(provider, mesajlar);
+    }
+
     /// <summary>Belirtilen sağlayıcıya mesaj geçmişiyle streaming istek gönderir.</summary>
     public static IAsyncEnumerable<string> IstekGonder(ProviderTipi provider, List<Mesaj> mesajlar)
     {

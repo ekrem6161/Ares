@@ -40,4 +40,25 @@ public class CanliApiTests
         Assert.False(string.IsNullOrWhiteSpace(cevap));
         Assert.False(cevap.StartsWith("[HATA]", StringComparison.Ordinal));
     }
+
+    [Fact]
+    public async Task Anthropic_Haiku_GecmisliCanliCevapDoner()
+    {
+        if (!CanliAktif())
+            return;
+        Assert.True(Config.Yukle(), "Config yuklenemedi (ARES_CANLI=1 ile calistirildi mi?)");
+        var mesajlar = new List<Mesaj>
+        {
+            new(RolTipi.User, "1 ile 1 kac eder? Tek kelimeyle soyle."),
+            new(RolTipi.Assistant, "2"),
+            new(RolTipi.User, "Ona 3 ekle, sonuc kac? Tek kelimeyle soyle."),
+        };
+        var cevap = await TestYardimcilari.AkisiTopla(
+            Router.IstekGonder(ProviderTipi.Anthropic, mesajlar));
+        Assert.False(string.IsNullOrWhiteSpace(cevap));
+        Assert.False(cevap.StartsWith("[HATA]", StringComparison.Ordinal));
+        Assert.True(
+            cevap.Contains("5") || cevap.Contains("beş", StringComparison.OrdinalIgnoreCase),
+            "Gecmis tasinmadi: " + cevap);
+    }
 }

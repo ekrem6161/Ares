@@ -1,3 +1,4 @@
+using System;
 using Ares.Core;
 using Xunit;
 
@@ -8,6 +9,8 @@ public class ConfigTests
     [Fact]
     public void VarsayilanDegerlerBos()
     {
+        if (Environment.GetEnvironmentVariable("ARES_CANLI") == "1")
+            return;
         Assert.Equal("", Config.OpenAIKey);
         Assert.Equal("", Config.OpenAIURL);
         Assert.Equal("", Config.OpenAIModel);

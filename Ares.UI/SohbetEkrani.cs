@@ -1,5 +1,6 @@
 using System;
 using Ares.Core;
+using Ares.Core.Sohbet;
 using Ares.UI.Bilesenler;
 using Terminal.Gui;
 
@@ -9,12 +10,14 @@ namespace Ares.UI;
 /// Sohbet ekranı: üstte logo/versiyon/ayraç, ortada mesaj listesi,
 /// altta giriş kutusu ve durum çubuğu. Enter ile gönderim yapılır;
 /// yanıt AkisTuketicisi ile parça parça ekrana basılır, akış boyunca
-/// giriş kilitlenir. Ctrl+Q çıkış.
+/// giriş kilitlenir. Geçmiş Core'daki Sohbet nesnesinde tutulur ve
+/// her istekte API'ye tam geçmiş gider. Ctrl+Q çıkış.
 /// </summary>
 public sealed class SohbetEkrani : View
 {
     public event Action? CikisIstendi;
 
+    private readonly Sohbet _gecmis = new();
     private readonly SohbetGorunumu _sohbet;
     private readonly IstemKutusu _kutu;
     private readonly AltBilgi _altBilgi;
@@ -68,11 +71,24 @@ public sealed class SohbetEkrani : View
     {
         if (string.IsNullOrWhiteSpace(metin))
             return;
+        _gecmis.KullaniciMesajiEkle(metin);
         _sohbet.Ekle(MesajRol.Kullanici, "You: " + metin);
         _kutu.Icerik = "";
         _kutu.CanFocus = false;
         _altBilgi.Ayarla("Enter send  Ctrl+Q quit", "Sending...", Color.DarkGray);
-        AkisTuketicisi.Calistir(Router.IstekGonder(metin), ParcaGeldi, AkisBitti);
+        var yanit = _gecmis.AsistanYanitiniBaslat();
+        AkisTuketicisi.Calistir(
+            Router.IstekGonder(_gecmis.Mesajlar()),
+            parca =>
+            {
+                yanit.ParcaEkle(parca);
+                ParcaGeldi(parca);
+            },
+            () =>
+            {
+                yanit.Bitir();
+                AkisBitti();
+            });
     }
 
     private void ParcaGeldi(string parca)
