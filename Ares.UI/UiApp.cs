@@ -120,6 +120,7 @@ public static class UiApp
                 else
                 {
                     spinner.Durdur();
+                    sohbet.AsistanRenderiniBitir();
                     int saniye = Math.Max(0, (int)(DateTime.UtcNow - turBaslangici).TotalSeconds);
                     sohbet.Ekle(ChatRole.Durum, $"Worked for {saniye}s");
                     solFooter.Text = FooterIdle;
