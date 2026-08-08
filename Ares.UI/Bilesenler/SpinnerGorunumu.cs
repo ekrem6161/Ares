@@ -4,15 +4,15 @@ using Terminal.Gui;
 namespace Ares.UI.Bilesenler;
 
 /// <summary>
-/// LED chaser dalga animasyonu. 10 kutu karakter üzerinde çift yönlü
-/// tarama efekti. <see cref="Baslat"/> ile başlar, <see cref="Durdur"/>
-/// ile durur; animasyon ana döngü zamanlayıcısıyla ilerler (UI thread).
+/// opencode tarzı braille nokta spinner'ı. 10 çerçeveli klasik dots
+/// animasyonu: ⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏. <see cref="Baslat"/> ile başlar,
+/// <see cref="Durdur"/> ile durur; animasyon ana döngü zamanlayıcısıyla
+/// ilerler (UI thread). Her <see cref="Baslat"/> çerçeveyi baştan alır.
 /// </summary>
 public sealed class SpinnerGorunumu : View
 {
-    private const int KutuSayisi = 10;
-    private int _pozisyon;
-    private int _yon = 1;
+    private const string Cerceveler = "⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏";
+    private int _cerceve;
     private object? _zamanlayici;
 
     public bool Aktif => _zamanlayici is not null;
@@ -20,20 +20,17 @@ public sealed class SpinnerGorunumu : View
     public SpinnerGorunumu()
     {
         CanFocus = false;
-        Width = KutuSayisi * 3;
+        Width = 1;
         Height = 1;
     }
 
     public void Baslat()
     {
         Durdur();
-        _zamanlayici = Application.MainLoop.AddTimeout(TimeSpan.FromMilliseconds(100), _ =>
+        _cerceve = 0;
+        _zamanlayici = Application.MainLoop.AddTimeout(TimeSpan.FromMilliseconds(80), _ =>
         {
-            _pozisyon += _yon;
-            if (_pozisyon >= KutuSayisi - 1)
-                _yon = -1;
-            else if (_pozisyon <= 0)
-                _yon = 1;
+            _cerceve = (_cerceve + 1) % Cerceveler.Length;
             SetNeedsDisplay();
             return true;
         });
@@ -51,16 +48,16 @@ public sealed class SpinnerGorunumu : View
     public override void Redraw(Rect bounds)
     {
         var surucu = Application.Driver;
-        if (Bounds.Width < KutuSayisi * 3)
-            return;
-
-        for (int i = 0; i < KutuSayisi; i++)
+        if (!Aktif || Bounds.Width < 1)
         {
-            bool aktif = i == _pozisyon;
-            var renk = aktif ? Color.BrightCyan : Color.DarkGray;
-            surucu.SetAttribute(surucu.MakeAttribute(renk, Color.Black));
-            Move(i * 3, 0);
-            surucu.AddStr(aktif ? "[■]" : "[□]");
+            surucu.SetAttribute(surucu.MakeAttribute(Color.Black, Color.Black));
+            Move(0, 0);
+            surucu.AddStr(" ");
+            return;
         }
+
+        surucu.SetAttribute(surucu.MakeAttribute(Color.Green, Color.Black));
+        Move(0, 0);
+        surucu.AddStr(Cerceveler[_cerceve].ToString());
     }
 }

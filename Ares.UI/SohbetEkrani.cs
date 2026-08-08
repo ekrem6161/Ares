@@ -64,6 +64,7 @@ public sealed class SohbetEkrani : View
         };
 
         _kutu.MesajGonderildi += MesajGeldi;
+        _kutu.IcerikDegisti += YazimDurumu;
 
         Add(logo, surum, ayrac, _sohbet, _kutu, _altBilgi, _spinner);
         KeyPress += TusBasildi;
@@ -83,8 +84,6 @@ public sealed class SohbetEkrani : View
         _sohbet.Ekle(MesajRol.Kullanici, "You: " + metin);
         _kutu.Icerik = "";
         _kutu.CanFocus = false;
-        _altBilgi.Ayarla("", "", Color.DarkGray);
-        _spinner.Baslat();
         var yanit = _gecmis.AsistanYanitiniBaslat();
         AkisTuketicisi.Calistir(
             Router.IstekGonder(_gecmis.Mesajlar()),
@@ -106,6 +105,20 @@ public sealed class SohbetEkrani : View
             _sohbet.Ekle(MesajRol.Hata, parca);
         else
             _sohbet.SonunaEkle(parca);
+    }
+
+    private void YazimDurumu(string metin)
+    {
+        if (string.IsNullOrEmpty(metin))
+        {
+            _spinner.Durdur();
+            _altBilgi.Ayarla(KisaYollar, "", Color.BrightGreen);
+        }
+        else
+        {
+            _altBilgi.Ayarla("", "", Color.DarkGray);
+            _spinner.Baslat();
+        }
     }
 
     private void AkisBitti()
