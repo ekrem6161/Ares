@@ -4,14 +4,21 @@ using Terminal.Gui;
 namespace Ares.UI.Bilesenler;
 
 /// <summary>
-/// opencode tarzı braille nokta spinner'ı. 10 çerçeveli klasik dots
-/// animasyonu: ⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏. <see cref="Baslat"/> ile başlar,
-/// <see cref="Durdur"/> ile durur; animasyon ana döngü zamanlayıcısıyla
-/// ilerler (UI thread). Her <see cref="Baslat"/> çerçeveyi baştan alır.
+/// opencode'un Knight Rider tarayıcı animasyonu (blocks stili):
+/// 8 kolon, çift yönlü tarama, uçlarda kısa bekleme, arkada gradyan
+/// kuyruk. Aktif kare ■ parlak, kuyruk soluklaşır, pasif · koyu.
+/// Glifler cmd uyumlu (CP437/Consolas'te mevcut — braille cmd'de
+/// render edilmez). Her Baslat çerçeveyi baştan alır.
 /// </summary>
 public sealed class SpinnerGorunumu : View
 {
-    private const string Cerceveler = "⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏";
+    private const int Genislik = 8;
+    private const int Ileri = Genislik;
+    private const int Geri = Genislik - 1;
+    private const int BekleBas = 8;
+    private const int BekleSon = 4;
+    private const int Toplam = Ileri + BekleSon + Geri + BekleBas;
+
     private int _cerceve;
     private object? _zamanlayici;
 
@@ -20,7 +27,7 @@ public sealed class SpinnerGorunumu : View
     public SpinnerGorunumu()
     {
         CanFocus = false;
-        Width = 1;
+        Width = Genislik;
         Height = 1;
     }
 
@@ -30,7 +37,7 @@ public sealed class SpinnerGorunumu : View
         _cerceve = 0;
         _zamanlayici = Application.MainLoop.AddTimeout(TimeSpan.FromMilliseconds(80), _ =>
         {
-            _cerceve = (_cerceve + 1) % Cerceveler.Length;
+            _cerceve = (_cerceve + 1) % Toplam;
             SetNeedsDisplay();
             return true;
         });
@@ -48,16 +55,62 @@ public sealed class SpinnerGorunumu : View
     public override void Redraw(Rect bounds)
     {
         var surucu = Application.Driver;
-        if (!Aktif || Bounds.Width < 1)
+        if (!Aktif || Bounds.Width < Genislik)
         {
             surucu.SetAttribute(surucu.MakeAttribute(Color.Black, Color.Black));
             Move(0, 0);
-            surucu.AddStr(" ");
+            surucu.AddStr(new string(' ', Bounds.Width));
             return;
         }
 
-        surucu.SetAttribute(surucu.MakeAttribute(Color.Green, Color.Black));
-        Move(0, 0);
-        surucu.AddStr(Cerceveler[_cerceve].ToString());
+        for (int i = 0; i < Genislik; i++)
+        {
+            int indeks = RenkIndeksi(i);
+            string glif = indeks < 0 ? "·" : "■";
+            var renk = indeks switch
+            {
+                0 => Color.BrightGreen,
+                1 => Color.Green,
+                >= 2 => Color.Gray,
+                _ => Color.DarkGray,
+            };
+            surucu.SetAttribute(surucu.MakeAttribute(renk, Color.Black));
+            Move(i, 0);
+            surucu.AddStr(glif);
+        }
+    }
+
+    private int RenkIndeksi(int i)
+    {
+        bool hareket;
+        bool ileri;
+        int konum;
+        int fade;
+        int f = _cerceve;
+
+        if (f < Ileri)
+        {
+            hareket = true; ileri = true; konum = f; fade = 0;
+        }
+        else if (f < Ileri + BekleSon)
+        {
+            hareket = false; ileri = true; konum = Genislik - 1; fade = f - Ileri;
+        }
+        else if (f < Ileri + BekleSon + Geri)
+        {
+            hareket = true; ileri = false; konum = Genislik - 2 - (f - Ileri - BekleSon); fade = 0;
+        }
+        else
+        {
+            hareket = false; ileri = false; konum = 0; fade = f - Ileri - BekleSon - Geri;
+        }
+
+        int mesafe = ileri ? konum - i : i - konum;
+        if (!hareket && mesafe < 0)
+            return -1;
+        int indeks = hareket ? mesafe : mesafe + fade;
+        if (indeks >= 3)
+            return -1;
+        return indeks < 0 ? -1 : indeks;
     }
 }

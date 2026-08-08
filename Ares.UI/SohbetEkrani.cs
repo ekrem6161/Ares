@@ -117,7 +117,8 @@ public sealed class SohbetEkrani : View
         else
         {
             _altBilgi.Ayarla("", "", Color.DarkGray);
-            _spinner.Baslat();
+            if (!_spinner.Aktif)
+                _spinner.Baslat();
         }
     }
 

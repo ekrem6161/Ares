@@ -37,6 +37,11 @@ public sealed class AltBilgi : View
         Move(0, 0);
         surucu.AddStr(new string('─', genislik));
 
+        surucu.SetAttribute(surucu.MakeAttribute(Color.Black, Color.Black));
+        Move(0, 1);
+        surucu.AddStr(new string(' ', genislik));
+
+        surucu.SetAttribute(surucu.MakeAttribute(Color.BrightGreen, Color.Black));
         Move(0, 1);
         surucu.AddStr(Kirp(_solMetin, genislik));
 
