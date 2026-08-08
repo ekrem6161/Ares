@@ -1,5 +1,5 @@
 using Ares.UI;
 
-// ares.exe — TUI giriş noktası: hoş geldin ekranından başlar.
+// ares.exe — TUI giriş noktası.
 
-Arayuz.Calistir();
+UiApp.Calistir().GetAwaiter().GetResult();
