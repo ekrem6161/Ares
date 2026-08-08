@@ -23,8 +23,6 @@ public sealed class SohbetEkrani : View
     private readonly AltBilgi _altBilgi;
     private readonly SpinnerGorunumu _spinner;
 
-    private const string KisaYollar = "Enter send  Ctrl+Q quit";
-
     public SohbetEkrani()
     {
         CanFocus = true;
@@ -48,7 +46,7 @@ public sealed class SohbetEkrani : View
 
         _kutu = new IstemKutusu
         {
-            X = 0, Y = Pos.AnchorEnd(4), Width = Dim.Fill(),
+            X = 0, Y = Pos.AnchorEnd(5), Width = Dim.Fill(),
             Placeholder = "Type a message and press Enter to chat",
         };
 
@@ -56,7 +54,7 @@ public sealed class SohbetEkrani : View
         {
             X = 0, Y = Pos.AnchorEnd(2), Width = Dim.Fill(), Height = 2,
         };
-        _altBilgi.Ayarla(KisaYollar, "", Color.BrightGreen);
+        _altBilgi.Ayarla("", "", Color.BrightGreen);
 
         _spinner = new SpinnerGorunumu
         {
@@ -64,7 +62,6 @@ public sealed class SohbetEkrani : View
         };
 
         _kutu.MesajGonderildi += MesajGeldi;
-        _kutu.IcerikDegisti += YazimDurumu;
 
         Add(logo, surum, ayrac, _sohbet, _kutu, _altBilgi, _spinner);
         KeyPress += TusBasildi;
@@ -84,6 +81,7 @@ public sealed class SohbetEkrani : View
         _sohbet.Ekle(MesajRol.Kullanici, "You: " + metin);
         _kutu.Icerik = "";
         _kutu.CanFocus = false;
+        _spinner.Baslat();
         var yanit = _gecmis.AsistanYanitiniBaslat();
         AkisTuketicisi.Calistir(
             Router.IstekGonder(_gecmis.Mesajlar()),
@@ -107,25 +105,9 @@ public sealed class SohbetEkrani : View
             _sohbet.SonunaEkle(parca);
     }
 
-    private void YazimDurumu(string metin)
-    {
-        if (string.IsNullOrEmpty(metin))
-        {
-            _spinner.Durdur();
-            _altBilgi.Ayarla(KisaYollar, "", Color.BrightGreen);
-        }
-        else
-        {
-            _altBilgi.Ayarla("", "", Color.DarkGray);
-            if (!_spinner.Aktif)
-                _spinner.Baslat();
-        }
-    }
-
     private void AkisBitti()
     {
         _spinner.Durdur();
-        _altBilgi.Ayarla(KisaYollar, "", Color.BrightGreen);
         OdagiKutuyaVer();
     }
 

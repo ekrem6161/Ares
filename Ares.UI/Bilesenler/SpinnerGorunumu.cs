@@ -4,10 +4,10 @@ using Terminal.Gui;
 namespace Ares.UI.Bilesenler;
 
 /// <summary>
-/// opencode'un Knight Rider tarayıcı animasyonu (blocks stili):
-/// 8 kolon, çift yönlü tarama, uçlarda kısa bekleme, arkada gradyan
-/// kuyruk. Aktif kare ■ parlak, kuyruk soluklaşır, pasif · koyu.
-/// Glifler cmd uyumlu (CP437/Consolas'te mevcut — braille cmd'de
+/// opencode'un Knight Rider tarayıcı animasyonu (blocks stili, birebir
+/// parametreler: genişlik 8, holdStart 30, holdEnd 9, 40ms): çift yönlü
+/// tarama, uçlarda bekleme, arkada gradyan kuyruk. Aktif kare ■ parlak,
+/// kuyruk soluklaşır, pasif · koyu. Glifler cmd uyumlu (braille cmd'de
 /// render edilmez). Her Baslat çerçeveyi baştan alır.
 /// </summary>
 public sealed class SpinnerGorunumu : View
@@ -15,8 +15,8 @@ public sealed class SpinnerGorunumu : View
     private const int Genislik = 8;
     private const int Ileri = Genislik;
     private const int Geri = Genislik - 1;
-    private const int BekleBas = 8;
-    private const int BekleSon = 4;
+    private const int BekleBas = 30;
+    private const int BekleSon = 9;
     private const int Toplam = Ileri + BekleSon + Geri + BekleBas;
 
     private int _cerceve;
@@ -35,7 +35,7 @@ public sealed class SpinnerGorunumu : View
     {
         Durdur();
         _cerceve = 0;
-        _zamanlayici = Application.MainLoop.AddTimeout(TimeSpan.FromMilliseconds(80), _ =>
+        _zamanlayici = Application.MainLoop.AddTimeout(TimeSpan.FromMilliseconds(40), _ =>
         {
             _cerceve = (_cerceve + 1) % Toplam;
             SetNeedsDisplay();
@@ -71,7 +71,7 @@ public sealed class SpinnerGorunumu : View
             {
                 0 => Color.BrightGreen,
                 1 => Color.Green,
-                >= 2 => Color.Gray,
+                2 => Color.Gray,
                 _ => Color.DarkGray,
             };
             surucu.SetAttribute(surucu.MakeAttribute(renk, Color.Black));

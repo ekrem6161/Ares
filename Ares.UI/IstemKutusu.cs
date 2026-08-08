@@ -20,7 +20,6 @@ public sealed class IstemKutusu : View
         {
             _icerik = value;
             _imlec = _icerik.Length;
-            IcerikDegisti?.Invoke(_icerik);
             SetNeedsDisplay();
         }
     }
@@ -32,7 +31,6 @@ public sealed class IstemKutusu : View
     }
 
     public event Action<string>? MesajGonderildi;
-    public event Action<string>? IcerikDegisti;
 
     public IstemKutusu()
     {
@@ -55,7 +53,6 @@ public sealed class IstemKutusu : View
             if (_imlec > 0)
             {
                 _icerik = _icerik.Remove(--_imlec, 1);
-                IcerikDegisti?.Invoke(_icerik);
                 SetNeedsDisplay();
             }
             e.Handled = true;
@@ -65,7 +62,6 @@ public sealed class IstemKutusu : View
         if (ch >= 32)
         {
             _icerik = _icerik.Insert(_imlec++, ch.ToString());
-            IcerikDegisti?.Invoke(_icerik);
             SetNeedsDisplay();
             e.Handled = true;
         }
