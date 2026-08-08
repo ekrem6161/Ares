@@ -21,6 +21,9 @@ public sealed class SohbetEkrani : View
     private readonly SohbetGorunumu _sohbet;
     private readonly IstemKutusu _kutu;
     private readonly AltBilgi _altBilgi;
+    private readonly SpinnerGorunumu _spinner;
+
+    private const string KisaYollar = "Enter send  Ctrl+Q quit";
 
     public SohbetEkrani()
     {
@@ -51,13 +54,18 @@ public sealed class SohbetEkrani : View
 
         _altBilgi = new AltBilgi
         {
-            X = 0, Y = Pos.AnchorEnd(1), Width = Dim.Fill(), Height = 2,
+            X = 0, Y = Pos.AnchorEnd(2), Width = Dim.Fill(), Height = 2,
         };
-        _altBilgi.Ayarla("Enter send  Ctrl+Q quit", "Ready", Color.BrightGreen);
+        _altBilgi.Ayarla(KisaYollar, "", Color.BrightGreen);
+
+        _spinner = new SpinnerGorunumu
+        {
+            X = 0, Y = Pos.AnchorEnd(1),
+        };
 
         _kutu.MesajGonderildi += MesajGeldi;
 
-        Add(logo, surum, ayrac, _sohbet, _kutu, _altBilgi);
+        Add(logo, surum, ayrac, _sohbet, _kutu, _altBilgi, _spinner);
         KeyPress += TusBasildi;
     }
 
@@ -75,7 +83,8 @@ public sealed class SohbetEkrani : View
         _sohbet.Ekle(MesajRol.Kullanici, "You: " + metin);
         _kutu.Icerik = "";
         _kutu.CanFocus = false;
-        _altBilgi.Ayarla("Enter send  Ctrl+Q quit", "Sending...", Color.DarkGray);
+        _altBilgi.Ayarla("", "", Color.DarkGray);
+        _spinner.Baslat();
         var yanit = _gecmis.AsistanYanitiniBaslat();
         AkisTuketicisi.Calistir(
             Router.IstekGonder(_gecmis.Mesajlar()),
@@ -101,7 +110,8 @@ public sealed class SohbetEkrani : View
 
     private void AkisBitti()
     {
-        _altBilgi.Ayarla("Enter send  Ctrl+Q quit", "Ready", Color.BrightGreen);
+        _spinner.Durdur();
+        _altBilgi.Ayarla(KisaYollar, "", Color.BrightGreen);
         OdagiKutuyaVer();
     }
 
