@@ -7,9 +7,9 @@ namespace Ares.UI.Bilesenler;
 /// opencode'un Knight Rider tarayıcı animasyonu (blocks stili, birebir
 /// parametreler: genişlik 8 hücre, holdStart 30, holdEnd 9, 40ms): çift
 /// yönlü tarama, uçlarda bekleme, arkada gradyan kuyruk. Her hücre 2
-/// kolon çizilir: aktif ■■ parlak, kuyruk soluklaşır, pasif ·· koyu.
-/// Glifler cmd uyumlu (braille cmd'de render edilmez). Her Baslat
-/// çerçeveyi baştan alır.
+/// kolon çizilir: aktif ■■ parlak (opencode varsayılanı kırmızı),
+/// kuyruk soluklaşır, pasif ·· koyu. Glifler cmd uyumlu (braille cmd'de
+/// render edilmez). Her Baslat çerçeveyi baştan alır.
 /// </summary>
 public sealed class SpinnerGorunumu : View
 {
@@ -37,7 +37,7 @@ public sealed class SpinnerGorunumu : View
     {
         Durdur();
         _cerceve = 0;
-        _zamanlayici = Application.MainLoop.AddTimeout(TimeSpan.FromMilliseconds(40), _ =>
+        _zamanlayici = Application.MainLoop.AddTimeout(TimeSpan.FromMilliseconds(80), _ =>
         {
             _cerceve = (_cerceve + 1) % Toplam;
             SetNeedsDisplay();
@@ -71,9 +71,9 @@ public sealed class SpinnerGorunumu : View
             string glif = indeks < 0 ? "··" : "■■";
             var renk = indeks switch
             {
-                0 => Color.BrightGreen,
-                1 => Color.Green,
-                2 => Color.Gray,
+                0 => Color.BrightRed,
+                1 => Color.Red,
+                2 => Color.Brown,
                 _ => Color.DarkGray,
             };
             surucu.SetAttribute(surucu.MakeAttribute(renk, Color.Black));
