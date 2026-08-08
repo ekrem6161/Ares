@@ -27,8 +27,6 @@ public static class UiApp
         "╩ ╩╩╚═╚═╝╚═╝",
     };
 
-    private const string FooterIdle = "? shortcuts   /help  /clear  /exit   Ctrl+Q quit";
-
     public static Task Calistir()
     {
         Config.Yukle();
@@ -92,11 +90,6 @@ public static class UiApp
                 X = 0, Y = Pos.AnchorEnd(2), Width = Dim.Fill(), Height = 1,
                 ColorScheme = Theme.RenkSemasi(Color.DarkGray, Color.Black),
             };
-            var solFooter = new Label(FooterIdle)
-            {
-                X = 0, Y = Pos.AnchorEnd(1), Height = 1,
-                ColorScheme = Theme.RenkSemasi(Color.DarkGray, Color.Black),
-            };
             var spinner = new SpinnerGorunumu
             {
                 X = 1, Y = Pos.AnchorEnd(1),
@@ -106,7 +99,7 @@ public static class UiApp
             DateTime turBaslangici = DateTime.UtcNow;
             AsistanYaniti? yanit = null;
 
-            // Tur sırasında input'u kilitle, spinner'ı çalıştır, footer durumunu yönet.
+            // Tur sırasında input'u kilitle ve spinner'ı çalıştır.
             void MesgulYap(bool mesgulMu)
             {
                 mesgul = mesgulMu;
@@ -115,7 +108,6 @@ public static class UiApp
                 {
                     turBaslangici = DateTime.UtcNow;
                     spinner.Baslat();
-                    solFooter.Text = "";
                 }
                 else
                 {
@@ -123,9 +115,7 @@ public static class UiApp
                     sohbet.AsistanRenderiniBitir();
                     int saniye = Math.Max(0, (int)(DateTime.UtcNow - turBaslangici).TotalSeconds);
                     sohbet.Ekle(ChatRole.Durum, $"Worked for {saniye}s");
-                    solFooter.Text = FooterIdle;
                 }
-                solFooter.SetNeedsDisplay();
             }
 
             void Cik() => Application.RequestStop();
@@ -204,7 +194,7 @@ public static class UiApp
                 }
             };
 
-            ust.Add(logo, surum, bilgi, dizin, sohbet, ustAyrac, isaret, input, altAyrac, spinner, solFooter);
+            ust.Add(logo, surum, bilgi, dizin, sohbet, ustAyrac, isaret, input, altAyrac, spinner);
             input.SetFocus();
 
             sohbet.Ekle(ChatRole.Sistem, "Ares ready. Type a message and press Enter.");
