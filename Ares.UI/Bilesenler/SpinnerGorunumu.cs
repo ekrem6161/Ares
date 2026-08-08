@@ -4,12 +4,11 @@ using Terminal.Gui;
 namespace Ares.UI.Bilesenler;
 
 /// <summary>
-/// opencode'un Knight Rider tarayıcı animasyonu (blocks stili, birebir
-/// parametreler: genişlik 8 hücre, holdStart 30, holdEnd 9, 40ms): çift
-/// yönlü tarama, uçlarda bekleme, arkada gradyan kuyruk. Her hücre 2
-/// kolon çizilir: aktif ■■ parlak (opencode varsayılanı kırmızı),
-/// kuyruk soluklaşır, pasif ·· koyu. Glifler cmd uyumlu (braille cmd'de
-/// render edilmez). Her Baslat çerçeveyi baştan alır.
+/// Knight Rider tarayıcı animasyonu (blocks stili): 8 hücre x 2
+/// kolon genişlik, çift yönlü tarama, uçlarda bekleme (30/9), arkada
+/// gradyan kuyruk. Aktif ■■ parlak kırmızı, kuyruk soluklaşır,
+/// pasif ·· koyu. Glifler cmd uyumlu (braille cmd'de render
+/// edilmez). Her Baslat çerçeveyi baştan alır.
 /// </summary>
 public sealed class SpinnerGorunumu : View
 {

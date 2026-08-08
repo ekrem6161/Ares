@@ -13,8 +13,8 @@ alınmıştır. Yeni görev planlanırken buraya bakılır.
 - Yapilan: OpenAI + Anthropic "stream: true" SSE parse
   (SseOkuyucu + her saglayicinin CevapParser'i), hatalar
   "[HATA] ..." tek parcasi olarak akar. Canli dogrulandi.
-- Kalan: TUI'de parca parca render — sohbet ekrani
-  adiminda (MesajBaslat/EkleVeyaAc hazir).
+- Kalan: TAMAMLANDI — SohbetGorunumu + AkisTuketicisi ile
+  parca parca render ediliyor (core/sohbet-ekrani).
 
 ------------------------------------------------------
 2. TIMEOUT
@@ -53,25 +53,48 @@ alınmıştır. Yeni görev planlanırken buraya bakılır.
 ------------------------------------------------------
 6. SESSION (oturum geçmişi)
 ------------------------------------------------------
-- Durum: Yok; her istek tek atımlık, geçmiş taşınmıyor.
-- Eklenecek: Mesaj geçmişi listesi, kayıt/yükleme,
-  TUI'de oturum görünümü. (Prompt caching ile birlikte.)
+- Durum: Sohbet.cs eklendi (core/sohbet-gecmisi): sinirsiz
+  mesaj geçmişi, KullaniciMesajiEkle / AsistanYanitiniBaslat /
+  Mesajlar() / Temizle; her istekte API'ye TAM geçmiş gider
+  (Router.IstekGonder(List<Mesaj>) overload). [HATA] önekli
+  asistan yanitlari geçmişe YAZILMAZ (Ekrem karari).
+- Kalan: Kayıt/yükleme (diske), oturum görünümü,
+  session geçmişini prompt caching ile birlikte kullanmak.
 
 ------------------------------------------------------
 7. TUI KATMANI (Ares.UI)
 ------------------------------------------------------
-- Durum: Basit sohbet ekrani var (SohbetEkrani): ustte logo/
-  versiyon/ayrac, ortada mesaj listesi (SohbetGorunumu), altta
-  giris kutusu (IstemKutusu) + AltBilgi. Config.Yukle baslangicta
-  cagrilir; gonderim Router.IstekGonder ile AkisTuketicisi
-  uzerinden parca parca ekrana basilir.
+- Durum: Sohbet ekrani var (SohbetEkrani): ustte logo/
+  versiyon/ayrac, ortada mesaj listesi (SohbetGorunumu),
+  altta giris kutusu (IstemKutusu) + AltBilgi + SpinnerGorunumu.
+  Config.Yukle baslangicta cagrilir; gonderim Router.IstekGonder
+  ile AkisTuketicisi uzerinden parca parca ekrana basilir;
+  gecmis Core'daki Sohbet nesnesinde tutulur.
+- Spinner (core/spinner): Knight Rider tarayici (blocks stili)
+  animasyon — 8 hücre x 2 kolon genislik, uclarda bekleme (30/9),
+  80ms, kirmizi gradyan (BrightRed/Red/Brown). Gonderimde Baslat,
+  akis bitince Durdur ("yanit beklerken" davranisi — Ekrem karari).
+- ÖNEMLİ GLYPH NOTU: Braille nokta spinner (klasik 10 cerceveli
+  dots seti ⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏) cmd/conhost'ta RENDER EDILMEZ:
+  Consolas/Lucida/raster fontlarda U+2800 bloğu yok, tum cerceveler
+  tofu kutusu gorunur ("tek sabit kutu"). Bu yüzden ■/· glifleri
+  kullanildi (CP437 + Consolas güvenli).
+- ÖNEMLİ ANCHOR NOTU: Terminal.Gui v1'de Pos.AnchorEnd(n) view'in
+  KENDI boyutunu dusmez (v1 issue #481) — 2 satirlik AltBilgi
+  AnchorEnd(1)'de metin satirini ekran disina tasirdi; AnchorEnd(2)
+  ile duzeltildi. AltBilgi.Redraw satir 1'i once bosaltir (stale
+  metin kalmasin diye).
+- UI kararlari (Ekrem): durum cubugu sol metni ("Enter send
+  Ctrl+Q quit") tamamen kaldirildi; spinner + giris kutusu duvardan
+  1 bosluk iceride (X=1 / Dim.Fill(1)).
+- NOT: Spinner Ekrem'in tam istedigi gibi olmadi ("istediğim gibi
+  olmadı ama sorun değil") — detaylar netlesmedi; sonraki adimda
+  istenirse yeniden duzenlenir.
 - YASAK: UI thread'inde stream'i senkron bekletmek (.Result /
   GetAwaiter().GetResult()) — ana dongu donar, tum yazi birden
   basilir, streaming anlamsizlasir.
-- Kalan: API'ye tam gecmis gonderme (Sohbet.cs ayri adim —
-  su an tek mesajlik), markdown render, config ekrani,
-  oturum kaydi. Ares.UI artik Ares.Core'a referans veriyor
-  (TFM net8.0-windows).
+- Kalan: markdown render, config ekrani, oturum kaydi.
+  Ares.UI artik Ares.Core'a referans veriyor (TFM net8.0-windows).
 - Bilinen API notu (1.17.1): TextField.Placeholder ve
   StatusItem.Alignment YOKTUR; placeholder overlay Label ile,
   sağ/sol çubuklar özel Redraw ile yapılır.
