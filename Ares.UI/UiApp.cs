@@ -97,12 +97,6 @@ public static class UiApp
                 X = 0, Y = Pos.AnchorEnd(1), Height = 1,
                 ColorScheme = Theme.RenkSemasi(Color.DarkGray, Color.Black),
             };
-            var sagFooter = new Label("ready")
-            {
-                X = Pos.AnchorEnd(7), Y = Pos.AnchorEnd(1), Width = 7, Height = 1,
-                TextAlignment = TextAlignment.Right,
-                ColorScheme = Theme.RenkSemasi(Color.BrightGreen, Color.Black),
-            };
             var spinner = new SpinnerGorunumu
             {
                 X = 1, Y = Pos.AnchorEnd(1),
@@ -122,8 +116,6 @@ public static class UiApp
                     turBaslangici = DateTime.UtcNow;
                     spinner.Baslat();
                     solFooter.Text = "";
-                    sagFooter.Text = "working";
-                    sagFooter.ColorScheme = Theme.RenkSemasi(Color.BrightYellow, Color.Black);
                 }
                 else
                 {
@@ -131,11 +123,8 @@ public static class UiApp
                     int saniye = Math.Max(0, (int)(DateTime.UtcNow - turBaslangici).TotalSeconds);
                     sohbet.Ekle(ChatRole.Durum, $"Worked for {saniye}s");
                     solFooter.Text = FooterIdle;
-                    sagFooter.Text = "ready";
-                    sagFooter.ColorScheme = Theme.RenkSemasi(Color.BrightGreen, Color.Black);
                 }
                 solFooter.SetNeedsDisplay();
-                sagFooter.SetNeedsDisplay();
             }
 
             void Cik() => Application.RequestStop();
@@ -214,7 +203,7 @@ public static class UiApp
                 }
             };
 
-            ust.Add(logo, surum, bilgi, dizin, sohbet, ustAyrac, isaret, input, altAyrac, spinner, solFooter, sagFooter);
+            ust.Add(logo, surum, bilgi, dizin, sohbet, ustAyrac, isaret, input, altAyrac, spinner, solFooter);
             input.SetFocus();
 
             sohbet.Ekle(ChatRole.Sistem, "Ares ready. Type a message and press Enter.");
